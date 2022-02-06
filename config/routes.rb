@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
-      get 'news', to: 'news#show'
+      post 'categories', to: 'categories#create'
+      resources :feeds, only: [:index, :create]
+      get 'feeds/:id/news', to: 'news#index'
     end
   end
 end
