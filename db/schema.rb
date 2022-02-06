@@ -10,13 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_06_045835) do
+ActiveRecord::Schema.define(version: 2022_02_06_161735) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "categories", force: :cascade do |t|
     t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "feeds", force: :cascade do |t|
+    t.string "name"
+    t.string "url"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -29,8 +36,11 @@ ActiveRecord::Schema.define(version: 2022_02_06_045835) do
     t.bigint "category_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "feed_id", null: false
     t.index ["category_id"], name: "index_news_on_category_id"
+    t.index ["feed_id"], name: "index_news_on_feed_id"
   end
 
   add_foreign_key "news", "categories"
+  add_foreign_key "news", "feeds"
 end
