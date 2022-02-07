@@ -12,19 +12,37 @@ module Api
         params[:urls].each do |url|
           rss = RssService.fetch(url)
           parsed_feed = RssService.parse_feed(rss)
-          feed = Feed.new(name: parsed_feed.channel.title, url: url)
+          feed = Feed.new(name: parsed_feed.channel.title, url: url, category_id: category.id)
           feed.save!
-          collect_news(parsed_feed.items, category.id, feed.id)
+          collect_news(parsed_feed.items, feed.id)
         end
         render json: { message: 'feeds saved' }, status: :ok
       end
 
-      def collect_news(news, category_id, feed_id)
+      def collect_news(news, feed_id)
         news.each do |item|
           new_item = New.new(title: item.title, description: item.description,
-                             published: item.pubDate, url: item.link, category_id: category_id,
-                             feed_id: feed_id)
+                             published: item.pubDate, url: item.link, feed_id: feed_id)
           new_item.save!
+        end
+      end
+
+      def update_feeds
+        recovered_feeds.each do |feed|
+          rss = RssService.fetch(feed.fetch(:url))
+          parsed_feed = RssService.parse_feed(rss)
+          Feed.destroy_all
+          feed = Feed.new(name: parsed_feed.channel.title, url: feed.fetch(:url), category_id: feed.fetch(:category_id))
+          feed.save!
+          collect_news(parsed_feed.items, feed.id)
+        end
+        render json: { message: 'feeds updated' }, status: :ok
+      end
+
+      def recovered_feeds
+        feeds = Feed.all
+        feeds.collect do |feed|
+          { url: feed.url, category_id: feed.category_id }
         end
       end
 
