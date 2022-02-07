@@ -5,7 +5,6 @@ class CreateNews < ActiveRecord::Migration[6.0]
       t.string :description
       t.string :url
       t.datetime :published
-      t.belongs_to :category, null: false, foreign_key: true
 
       t.timestamps
     end

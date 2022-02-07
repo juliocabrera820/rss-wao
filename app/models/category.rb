@@ -1,4 +1,4 @@
 class Category < ApplicationRecord
-  has_many :news
+  has_many :feeds
   validates :name, uniqueness: { case_sensitive: true }
 end
