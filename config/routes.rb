@@ -5,9 +5,8 @@ Rails.application.routes.draw do
       resources :feeds, only: [:index, :create]
       get 'feeds/:id/news', to: 'news#index'
       get 'feeds/refresh', to: 'feeds#update_feeds'
-      get 'news', to: 'news#sort_by'
+      get 'news', to: 'news#filter'
       get 'news/:id', to: 'news#show'
-      get 'news/search', to: 'news#search'
     end
   end
 end
