@@ -1,18 +1,17 @@
 module Api
   module V1
     class FeedsController < ApplicationController
-      before_action :category, only: [:create]
-
       def index
         feeds = Feed.all
         render json: feeds, status: :ok
       end
 
       def create
-        params[:urls].each do |url|
+        params[:feeds].each do |feed|
+          url = feed[:url]
           rss = RssService.fetch(url)
           parsed_feed = RssService.parse_feed(rss)
-          feed = Feed.new(name: parsed_feed.channel.title, url: url, category_id: category.id)
+          feed = Feed.new(name: parsed_feed.channel.title, url: url, category_id: category(feed[:category]).id)
           feed.save!
           collect_news(parsed_feed.items, feed.id)
         end
@@ -48,8 +47,8 @@ module Api
 
       private
 
-      def category
-        Category.find_by(name: params[:category])
+      def category(name)
+        Category.find_by!(name: name)
       end
     end
   end
