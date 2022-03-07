@@ -3,7 +3,7 @@ module Api
     class CategoriesController < ApplicationController
       def index
         categories = Category.all
-        render json: categories, status: :ok
+        render json: categories, each_serializer: CategorySerializer, status: :ok
       end
 
       def create
